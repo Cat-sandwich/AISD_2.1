@@ -3,10 +3,10 @@
 
 struct bin_tree
 {
-	float data;
+	int data;
 	bin_tree* left;
 	bin_tree* right;
-	bin_tree(float data = 0, bin_tree* left = NULL, bin_tree* right = NULL)
+	bin_tree(int data = 0, bin_tree* left = NULL, bin_tree* right = NULL)
 	{
 		this->data = data;
 		this->left = left;
@@ -21,10 +21,12 @@ class tree
 private:
 	bin_tree* root;
 public:
-	tree(float data = 0);
+	tree(int data = 0);
 	tree(const tree& tree);
 	void copy(bin_tree* tr, bin_tree* copy_tr);
 	void delete_tree(bin_tree* root);
 	~tree();
-
+	bool insert(int data);
+	void print(bin_tree* p, int indent = 0);
+	void erase(int data);
 };
