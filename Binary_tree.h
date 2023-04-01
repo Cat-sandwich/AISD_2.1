@@ -23,13 +23,17 @@ private:
 public:
 	tree(int data = 0);
 	tree(const tree& tree);
-	void copy(bin_tree* tr, bin_tree* copy_tr);
+	bin_tree* copy(bin_tree* tr, bin_tree* copy_tr);
 	void delete_tree(bin_tree* root);
 	~tree();
-	bin_tree* find(int data);
+	bin_tree* find(int data) const;
 	bool insert(int data);
-	void print(bin_tree* p, int indent = 0) const;
-	bin_tree* find_max(bin_tree* root);
-	bin_tree* find_parent(int data);
+	void print_tree(bin_tree* p, int level = 3) const;
+	bin_tree* find_max( bin_tree* root) const;
+	bin_tree* find_parent(int data) const;
 	bool erase(int data);
+	tree operator=(const tree& t);
+	bool contains(int data) const;
+	bin_tree* get_root();
+	int height(bin_tree* root) const;
 };

@@ -12,19 +12,28 @@ tree::tree(const tree& tr)
 {
 
 	root = new bin_tree();
-	copy(tr.root, root);
+	root = copy(tr.root, root);
 
 }
-void tree::copy(bin_tree* tr, bin_tree* copy_tr)
+bin_tree* tree::copy(bin_tree* old_tree, bin_tree* new_tree)
 {
-	if (!tr)
+	if (!old_tree)
 	{
-		copy_tr = NULL;
-		return;
+		return NULL ;
 	}
-	copy_tr->data = tr->data;
-	copy(tr->right, copy_tr->right);
-	copy(tr->left, copy_tr->left);
+	new_tree = new bin_tree(old_tree->data, NULL, NULL);
+	if (old_tree->left != NULL)
+		new_tree->left = copy(old_tree->left, new_tree->left);
+	else
+		new_tree->left = NULL;
+
+	if (old_tree->right != NULL)
+		new_tree->right = copy(old_tree->right, new_tree->right);
+	else
+		new_tree->right = NULL;
+
+
+	return new_tree;
 }
 
 tree::~tree()
@@ -41,7 +50,7 @@ void tree::delete_tree(bin_tree* root)
 		delete root;
 	}
 }
-bin_tree* tree::find(int data)
+bin_tree* tree::find(int data) const
 {
     bin_tree* tmp_root = root;
 
@@ -53,7 +62,7 @@ bin_tree* tree::find(int data)
     }
     return NULL;
 }
-bin_tree* tree::find_parent(int data)
+bin_tree* tree::find_parent(int data) const
 {
 	bin_tree* tmp_root = root;
 
@@ -97,7 +106,7 @@ bool tree::insert(int data)
 	}
 }
 
-bin_tree* tree::find_max(bin_tree* root)
+bin_tree* tree::find_max(bin_tree* root) const
 {
 	if (!root)
 		return NULL;
@@ -108,7 +117,17 @@ bin_tree* tree::find_max(bin_tree* root)
 		return tmp_root->left;
 	return tmp_root;
 }
+tree tree::operator=(const tree& t)
+{
+	root = new bin_tree(0, NULL, NULL);
+	root = copy(t.root, root);
+	return *this;
+}
 
+bin_tree* tree::get_root()
+{
+	return root;
+}
 bool tree::erase(int data)
 {
 	if (!root)
@@ -198,12 +217,33 @@ bool tree::erase(int data)
 	return false;
 }
 
-void tree::print(bin_tree* root, int indent ) const
+int tree::height(bin_tree* root) const 
 {
+	if (!root)
+		return 0;
+	int r = height(root->right);
+	int l = height(root->left);
+	if (r > l)
+		return r + 1;
+	else
+		return l + 1;
+
+}
+void tree::print_tree(bin_tree* root, int level) const
+{
+	if (!root)
+		return;
+	int h = height(root);
+	cout << string(h, ' ')<< root->data << endl;
+	for (int i=0; i<)
+
+
+	
 	if (root != NULL) {
-		if (root->left) print(root->left, indent + 4);
-		if (root->right) print(root->right, indent + 4);
-		cout << root->data << "\n ";
+		print_tree(root->left, indent + 3);
+		for (int i = 0; i < indent; i++) cout << "   ";
+		cout << root->data << endl;
+		print_tree(root->right, indent + 6);
 	}
 }
 
