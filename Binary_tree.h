@@ -26,7 +26,10 @@ public:
 	void copy(bin_tree* tr, bin_tree* copy_tr);
 	void delete_tree(bin_tree* root);
 	~tree();
+	bin_tree* find(int data);
 	bool insert(int data);
-	void print(bin_tree* p, int indent = 0);
-	void erase(int data);
+	void print(bin_tree* p, int indent = 0) const;
+	bin_tree* find_max(bin_tree* root);
+	bin_tree* find_parent(int data);
+	bool erase(int data);
 };
