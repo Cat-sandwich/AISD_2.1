@@ -35,12 +35,37 @@ int check_int()
 void print_array(tree* array, int current, int size)
 {
 
-	if (array == NULL) cout << "Деревьев нет(\n\n";
+	if (array == NULL) cout << "В лесу нет деревьев(\n\n";
 	else
 	{
 		cout << "Дерево №" << (current + 1) << "\n";
 		array[current].print_tree(array[current].get_root());
 	}
+}
+tree* add_node(tree* array, int current)
+{
+	cout << "Введите значение нового узла  " <<  ":" << endl;
+	int data = check_int();
+	while (array[current].insert(data) == false)
+	{
+		cout << "Такое значение уже есть, нужно ввести отличное от предыдущих!" << endl;
+		data = check_int();
+	}
+	array[current].insert(data);
+	return array;
+}
+tree* del_node(tree* array, int current)
+{
+	cout << "Введите значение удаляемого узла  " << ":" << endl;
+	int data = check_int();
+	while (array[current].contains(data) == false)
+	{
+		cout << "Такого значения нет, нужно ввести то, которое есть!" << endl;
+		data = check_int();
+	}
+	array[current].erase(data);
+	return array;
+
 }
 tree create_new_tree()
 {
@@ -82,8 +107,18 @@ tree* add_tree(tree* array, int current, int* size)
 	return new_array;
 }
 
+tree* delete_all_tree(tree* array, int* current, int* size)
+{
+	delete[] array;
+	*current = 0;
+	*size = 0;
+	return NULL;
+}
+
 tree* delete_one_tree(tree* array,int* current, int* size)
 {
+	if (*size == 1)
+		return delete_all_tree(array, current, size);
 	int tmp_current = *current;
 	tree* new_array = new tree[*size - 1];
 	for (int i = 0; i < *size; i++)
@@ -99,14 +134,18 @@ tree* delete_one_tree(tree* array,int* current, int* size)
 	}
 	*size -= 1;
 	*current -= 1;
+	
 	return new_array;
 }
-tree* delete_all_tree(tree* array, int *current, int *size)
+void info()
 {
-	delete[] array;
-	*current = 0;
-	*size = 0;
-	return NULL;
+	cout << "1 - Создать дерево" << endl;
+	cout << "2 - Удалить текущее дерево " << endl;
+	cout << "3 - Удалить все деревья" << endl;
+	cout << "4 - Добавить узел в текущее дерево" << endl;
+	cout << "5 - Удалить узел в текущем дереве" << endl;
+	cout << "0 - Завершить работу" << endl;
+	cout << "-> Вправо\n-< Влево\n" << endl;
 }
 void menu1()
 {
@@ -118,23 +157,24 @@ void menu1()
 	{
 
 		system("cls");
-		cout << "\tМОИ ДЕРЕВЬЯ\n" << endl;
+		cout << "\tМОИ ЛЕС\n" << endl;
 		print_array(array, current, size);
 
-		cout << "1 - Создать дерево\n2 - Удалить текущее дерево \n3 - Удалить все деревья" << endl;
-		cout << "0 - Завершить работу" << endl;
-		cout << "-> Вправо\n-< Влево\n" << endl;
-
+		info();
 		key = get_key();
 		switch (key)
 		{
+		case 48:
+			menu1 = false;
+			break;
 		case 49:
 			array = add_tree(array, current, &size);
 			break;
 		case 50:
 			if (size == 0)
 			{
-				cout << "Если деревьев нет, то и удалять нечего)";
+				cout << "Если деревьев нет, то и удалять нечего)\n";
+				system("pause");
 				break;
 			}
 			array = delete_one_tree( array, &current, &size);
@@ -142,10 +182,29 @@ void menu1()
 		case 51:
 			if (size == 0)
 			{
-				cout << "Если деревьев нет, то и удалять нечего)";
+				cout << "Если деревьев нет, то и удалять нечего)\n";
+				system("pause");
 				break;
 			}
 			array = delete_all_tree(array, &current, &size);
+			break;
+		case 52:
+			if (size == 0)
+			{
+				cout << "Если деревьев нет, то и добавить некуда)\n";
+				system("pause");
+				break;
+			}
+			array = add_node(array, current);
+			break;
+		case 53:
+			if (size == 0)
+			{
+				cout << "Если деревьев нет, то и удалять нечего)\n";
+				system("pause");
+				break;
+			}
+			array = del_node(array, current);
 			break;
 		case 75:
 			if (current > 0) current--;
@@ -166,7 +225,7 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	cout << "Здравствуйте! Вас приветствует программа \"МНОГО МАТРИЦ\"\n" << endl;
+	cout << "Здравствуйте! Вас приветствует программа \"ЛЕС\"\n" << endl;
 	system("pause");
 	menu1();
 

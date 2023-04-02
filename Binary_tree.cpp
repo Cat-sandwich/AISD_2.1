@@ -1,5 +1,6 @@
 #include "Binary_tree.h"
 #include <stdio.h>
+#include <iomanip>
 #include <iostream>
 using namespace std;
 
@@ -40,7 +41,17 @@ tree::~tree()
 {
 	delete_tree(root);
 }
-
+bool tree::contains(int data) const
+{
+	bin_tree* tmp_root = root;
+	while (tmp_root)
+	{
+		if (tmp_root->data == data) return true;
+		if (tmp_root->data > data)  tmp_root = tmp_root->left;
+		if (tmp_root->data < data)  tmp_root = tmp_root->right;
+	}
+	return false;
+}
 void tree::delete_tree(bin_tree* root)
 {
 	if (root)
@@ -52,13 +63,12 @@ void tree::delete_tree(bin_tree* root)
 }
 bin_tree* tree::find(int data) const
 {
-    bin_tree* tmp_root = root;
-
+	bin_tree* tmp_root = root;
     while (tmp_root)
     {
         if (tmp_root->data == data) return tmp_root;
-        if (tmp_root->data > data) return tmp_root->left;
-        if (tmp_root->data < data) return tmp_root->right;
+        if (tmp_root->data > data)  tmp_root = tmp_root->left;
+        if (tmp_root->data < data)  tmp_root = tmp_root->right;
     }
     return NULL;
 }
@@ -70,11 +80,24 @@ bin_tree* tree::find_parent(int data) const
 	{
 		if (tmp_root->left && (tmp_root->left)->data == data) return tmp_root;
 		if (tmp_root->right && (tmp_root->right)->data == data) return tmp_root;
-		if (tmp_root->data > data) return tmp_root->left;
-		if (tmp_root->data < data) return tmp_root->right;
+		if (tmp_root->data > data)  tmp_root->left;
+		if (tmp_root->data < data)  tmp_root->right;
 	}
 	return NULL;
 }
+
+int tree::count_node(bin_tree* root) const
+{
+	int counter = 0;
+	if (root)
+	{
+		counter += 1;
+		count_node(root->left);
+		count_node(root->right);
+	}
+	return counter;
+}
+
 bool tree::insert(int data)
 {
 	if (!root)
@@ -96,25 +119,24 @@ bool tree::insert(int data)
 			tmp_root->right = new bin_tree(data);
 			return true;
 		}
-		if (data == tmp_root->data)
-			return false;
 
 		if (tmp_root->data > data)
 			tmp_root = tmp_root->left;
 		else
 			tmp_root = tmp_root->right;
 	}
+	return false;
 }
 
-bin_tree* tree::find_max(bin_tree* root) const
+bin_tree* tree::find_min(bin_tree* root) const
 {
 	if (!root)
 		return NULL;
 	bin_tree* tmp_root = root;
-	while (tmp_root->right)
-		tmp_root = tmp_root->right;
-	if (tmp_root->left)
-		return tmp_root->left;
+	while (tmp_root->left)
+		tmp_root = tmp_root->left;
+	if (tmp_root->right)
+		return tmp_root->right;
 	return tmp_root;
 }
 tree tree::operator=(const tree& t)
@@ -130,91 +152,55 @@ bin_tree* tree::get_root()
 }
 bool tree::erase(int data)
 {
-	if (!root)
+	if (root->data == data)
+	{
+		std::cout << "You can't erase root!!!\n" << std::endl;
+		throw std::exception();
+	}
+
+
+	bin_tree* erase_root = find(data); 
+
+	bin_tree* max_root = nullptr;
+
+	if (!erase_root) 
 		return false;
-	bin_tree* erase_root = find(data);
-	if (!erase_root)
-		return NULL;
 
-	if (erase_root->left == NULL && erase_root->right == NULL)
+	max_root = find_min(erase_root->right);  
+
+	if (max_root == nullptr) 
 	{
-		delete erase_root;
-		erase_root = NULL;
-	}
-	bin_tree* parent_root = find_parent(data);
-	if (erase_root->left && !(erase_root->right))
-	{
-		if ((parent_root->left)->data == data)
+		bin_tree* parent_erase = find_parent(data);
+		if (erase_root == parent_erase->right)
 		{
-			parent_root->left = erase_root->left;
 			delete erase_root;
-			erase_root = NULL;
-			return true;
+			parent_erase->right = nullptr;
 		}
-		if ((parent_root->right)->data == data)
+		else
 		{
-			parent_root->right = erase_root->left;
 			delete erase_root;
-			erase_root = NULL;
-			return true;
+			parent_erase->left = nullptr;
+		}
+	}
+	else
+	{
+		erase_root->data = max_root->data;
+
+		bin_tree* tmp = find_parent(max_root->data);
+
+		if (tmp->right == max_root)
+		{
+			delete max_root;
+			erase_root->right = nullptr;
+		}
+		else
+		{
+			delete max_root;
+			erase_root->left = nullptr;
 		}
 	}
 
-	if (erase_root->right && !(erase_root->left))
-	{
-		if ((parent_root->left)->data == data)
-		{
-			parent_root->left = erase_root->right;
-			delete erase_root;
-			erase_root = NULL;
-			return true;
-		}
-		if ((parent_root->right)->data == data)
-		{
-			parent_root->right = erase_root->right;
-			delete erase_root;
-			erase_root = NULL;
-			return true;
-		}
-	}
-	if (erase_root->left && erase_root->right)
-	{
-		bin_tree* max_root = find_max(erase_root->left);
-		bin_tree* parent_max_root = find_parent(max_root->data);
-		if (!(max_root->left))
-		{			
-			if(erase_root->left == max_root)
-				max_root->left = NULL;
-			else max_root->left = erase_root->left;
-			max_root->right = erase_root->right;
-			if(parent_root->left == erase_root)
-				parent_root->left = max_root;
-			else parent_root->right = max_root;
-			delete erase_root;
-			erase_root = NULL;
-			if (parent_max_root != erase_root)
-				parent_max_root->right = NULL;
-			return true;
-		}
-		if (max_root->left)
-		{
-			
-			if (erase_root->left == max_root)
-				parent_max_root->left = max_root->left;
-			else parent_max_root->right = max_root->left;
-			max_root->right = erase_root->right;
-			max_root->left = erase_root->left;
-			if (parent_root->left == erase_root)
-				parent_root->left = max_root;
-			else parent_root->right = max_root;
-			delete erase_root;
-			erase_root = NULL;
-			if (parent_max_root != erase_root)
-				parent_max_root->right = NULL;
-			return true;
-		}
-	}
-	return false;
+	return true;
 }
 
 int tree::height(bin_tree* root) const 
@@ -229,22 +215,21 @@ int tree::height(bin_tree* root) const
 		return l + 1;
 
 }
-void tree::print_tree(bin_tree* root, int level) const
-{
-	if (!root)
-		return;
-	int h = height(root);
-	cout << string(h, ' ')<< root->data << endl;
-	for (int i=0; i<)
-
-
+void tree::print_tree(bin_tree* root, int ident, int level) const
+{		
+	if (root)
+	{
+		print_tree(root->left,-1, level + 2);
+		for (int i = 0; i < level; i++) cout << "   ";
+		if (ident == 0)
+			cout << "ê: "<< root->data << endl;
+		if (ident == 1)
+			cout << "ï : "<< root->data << endl;
+		if (ident == -1)
+			cout << "ë: "<< root->data << endl;
+		print_tree(root->right,1, level + 2);
+	}	
 	
-	if (root != NULL) {
-		print_tree(root->left, indent + 3);
-		for (int i = 0; i < indent; i++) cout << "   ";
-		cout << root->data << endl;
-		print_tree(root->right, indent + 6);
-	}
 }
 
 
