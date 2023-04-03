@@ -46,12 +46,18 @@ tree* add_node(tree* array, int current)
 {
 	cout << "Введите значение нового узла  " <<  ":" << endl;
 	int data = check_int();
-	while (array[current].insert(data) == false)
+	while (array[current].contains(data) == true)
 	{
 		cout << "Такое значение уже есть, нужно ввести отличное от предыдущих!" << endl;
 		data = check_int();
 	}
-	array[current].insert(data);
+	bool check = array[current].insert(data);
+	if (check)
+	{
+		cout << "Добавление узла прошло успешно!\n";
+		system("pause");
+	}
+
 	return array;
 }
 tree* del_node(tree* array, int current)
@@ -117,6 +123,8 @@ tree* delete_all_tree(tree* array, int* current, int* size)
 	delete[] array;
 	*current = 0;
 	*size = 0;
+	cout << "Лес вырублен!\n";
+	system("pause");
 	return NULL;
 }
 
@@ -138,8 +146,8 @@ tree* delete_one_tree(tree* array,int* current, int* size)
 			new_array[i - 1] = array[i];
 	}
 	*size -= 1;
-	*current -= 1;
-	
+	cout << "Удаление дерева прошло успешно!\n";
+	system("pause");	
 	return new_array;
 }
 void info()
@@ -149,6 +157,8 @@ void info()
 	cout << "3 - Удалить все деревья" << endl;
 	cout << "4 - Добавить узел в текущее дерево" << endl;
 	cout << "5 - Удалить узел в текущем дереве" << endl;
+	cout << "6 - Посчитать высоту текущего дерева" << endl;
+	cout << "7 - Выполнить задание" << endl;
 	cout << "0 - Завершить работу" << endl;
 	cout << "-> Вправо\n-< Влево\n" << endl;
 }
@@ -156,7 +166,7 @@ void menu1()
 {
 	int key = 0;
 	bool menu1 = true;
-	int current = 0, size = 0;
+	int current = 0, size = 0, height = 0, count = 0;
 	tree* array = NULL;
 	while (menu1)
 	{
@@ -210,6 +220,19 @@ void menu1()
 				break;
 			}
 			array = del_node(array, current);
+			break;
+		case 54:
+			if (size == 0)
+			{
+				cout << "Если деревьев нет, то и считать нечего)\n";
+				system("pause");
+				break;
+			}
+			height = array[current].height(array[current].get_root());
+			cout << "Высота = " << height << endl;
+			system("pause");
+			break;
+		case 55:
 			break;
 		case 75:
 			if (current > 0) current--;

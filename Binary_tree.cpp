@@ -48,7 +48,7 @@ bool tree::contains(int data) const
 	{
 		if (tmp_root->data == data) return true;
 		if (tmp_root->data > data)  tmp_root = tmp_root->left;
-		if (tmp_root->data < data)  tmp_root = tmp_root->right;
+		else if (tmp_root->data < data)  tmp_root = tmp_root->right;
 	}
 	return false;
 }
@@ -90,17 +90,6 @@ bin_tree* tree::find_parent(int data, bin_tree* root) const
 	return NULL;
 }
 
-int tree::count_node(bin_tree* root) const
-{
-	int counter = 0;
-	if (root)
-	{
-		counter += 1;
-		count_node(root->left);
-		count_node(root->right);
-	}
-	return counter;
-}
 
 bool tree::insert(int data)
 {

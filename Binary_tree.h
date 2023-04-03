@@ -36,5 +36,4 @@ public:
 	bool contains(int data) const;
 	bin_tree* get_root();
 	int height(bin_tree* root) const;
-	int count_node(bin_tree* root) const;
 };
