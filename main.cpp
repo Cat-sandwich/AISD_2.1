@@ -63,7 +63,12 @@ tree* del_node(tree* array, int current)
 		cout << "Такого значения нет, нужно ввести то, которое есть!" << endl;
 		data = check_int();
 	}
-	array[current].erase(data);
+	bool check = array[current].erase(data);
+	if (check)
+	{
+		cout << "Удаление узла прошло успешно!\n";
+		system("pause");
+	}
 	return array;
 
 }
@@ -157,7 +162,7 @@ void menu1()
 	{
 
 		system("cls");
-		cout << "\tМОИ ЛЕС\n" << endl;
+		cout << "\tМОЙ ЛЕС\n" << endl;
 		print_array(array, current, size);
 
 		info();

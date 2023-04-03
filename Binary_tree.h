@@ -30,7 +30,7 @@ public:
 	bool insert(int data);
 	void print_tree(bin_tree* p, int ident = 0, int level = 3) const;
 	bin_tree* find_min( bin_tree* root) const;
-	bin_tree* find_parent(int data) const;
+	bin_tree* find_parent(int data, bin_tree* root) const;
 	bool erase(int data);
 	tree operator=(const tree& t);
 	bool contains(int data) const;

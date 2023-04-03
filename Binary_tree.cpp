@@ -72,16 +72,20 @@ bin_tree* tree::find(int data) const
     }
     return NULL;
 }
-bin_tree* tree::find_parent(int data) const
+bin_tree* tree::find_parent(int data, bin_tree* root) const
 {
 	bin_tree* tmp_root = root;
 
 	while (tmp_root)
 	{
-		if (tmp_root->left && (tmp_root->left)->data == data) return tmp_root;
-		if (tmp_root->right && (tmp_root->right)->data == data) return tmp_root;
-		if (tmp_root->data > data)  tmp_root->left;
-		if (tmp_root->data < data)  tmp_root->right;
+		if (tmp_root->left && (tmp_root->left)->data == data)
+			return tmp_root;
+		if (tmp_root->right && (tmp_root->right)->data == data)
+			return tmp_root;
+		if (tmp_root->data > data)
+			tmp_root = tmp_root->left;
+		else if (tmp_root->data < data)
+			tmp_root = tmp_root->right;
 	}
 	return NULL;
 }
@@ -135,8 +139,6 @@ bin_tree* tree::find_min(bin_tree* root) const
 	bin_tree* tmp_root = root;
 	while (tmp_root->left)
 		tmp_root = tmp_root->left;
-	if (tmp_root->right)
-		return tmp_root->right;
 	return tmp_root;
 }
 tree tree::operator=(const tree& t)
@@ -152,55 +154,86 @@ bin_tree* tree::get_root()
 }
 bool tree::erase(int data)
 {
-	if (root->data == data)
-	{
-		std::cout << "You can't erase root!!!\n" << std::endl;
-		throw std::exception();
-	}
-
-
-	bin_tree* erase_root = find(data); 
-
-	bin_tree* max_root = nullptr;
-
-	if (!erase_root) 
+	if (!root)
 		return false;
-
-	max_root = find_min(erase_root->right);  
-
-	if (max_root == nullptr) 
+	bin_tree* erase_root = find(data);
+	if (erase_root == NULL)
+		return false;
+	if (erase_root == root)
 	{
-		bin_tree* parent_erase = find_parent(data);
-		if (erase_root == parent_erase->right)
+		if (root->left == NULL && root->right == NULL)
 		{
-			delete erase_root;
-			parent_erase->right = nullptr;
+			cout << "Вы не можете удалить корень!" << endl;
+			system("pause");
+			return false;
 		}
-		else
+		if (erase_root->left != NULL && erase_root->right == NULL) // если есть левое поддерево, но нет правого
 		{
+			root = root->left;
 			delete erase_root;
-			parent_erase->left = nullptr;
+			return true;
+		}
+		if (erase_root->left == NULL && erase_root->right != NULL) // если есть правое поддерево, но нет левого
+		{
+			root = root->right;
+			delete erase_root;
+			return true;
 		}
 	}
-	else
+	
+	
+	if (erase_root->left == NULL && erase_root->right == NULL) // удаление листа
 	{
-		erase_root->data = max_root->data;
-
-		bin_tree* tmp = find_parent(max_root->data);
-
-		if (tmp->right == max_root)
-		{
-			delete max_root;
-			erase_root->right = nullptr;
-		}
+		bin_tree* parent_erase = find_parent(data, root);
+		if (parent_erase->left == erase_root)
+			parent_erase->left = NULL;
 		else
+			parent_erase->right = NULL;
+		delete erase_root;
+		return true;
+	}
+	if (erase_root->left != NULL && erase_root->right == NULL) // если есть левое поддерево, но нет правого
+	{
+		bin_tree* parent_erase = find_parent(data, root);
+		if (parent_erase->left == erase_root)
+			parent_erase->left = erase_root->left;
+		else
+			parent_erase->right = erase_root->left;
+		delete erase_root;
+		return true;
+	}
+	if (erase_root->left == NULL && erase_root->right != NULL) // если есть правое поддерево, но нет левого
+	{
+		bin_tree* parent_erase = find_parent(data, root);
+		if (parent_erase->left == erase_root)
+			parent_erase->left = erase_root->right;
+		else
+			parent_erase->right = erase_root->right;
+		delete erase_root;
+		return true;
+	}
+	if (erase_root->left != NULL && erase_root->right != NULL) // есть оба поддерева
+	{
+		bin_tree* min_node = find_min(erase_root->right);
+		bin_tree* parent_min_node = find_parent(min_node->data, root);
+		if (min_node->right == NULL) // у минимального нет поддеревьев
 		{
-			delete max_root;
-			erase_root->left = nullptr;
+			erase_root->data = min_node->data;
+			parent_min_node->right = NULL;
+			delete min_node;
+			return true;
+		}
+		else // у минимального есть правое поддерево
+		{
+			erase_root->data = min_node->data;
+			parent_min_node->right = min_node->right;
+			delete min_node;
+			return true;
 		}
 	}
+	
 
-	return true;
+	
 }
 
 int tree::height(bin_tree* root) const 
@@ -222,7 +255,7 @@ void tree::print_tree(bin_tree* root, int ident, int level) const
 		print_tree(root->left,-1, level + 2);
 		for (int i = 0; i < level; i++) cout << "   ";
 		if (ident == 0)
-			cout << "к: "<< root->data << endl;
+			cout << "к: "<< root->data << "----------------------------------" << endl;
 		if (ident == 1)
 			cout << "п : "<< root->data << endl;
 		if (ident == -1)
