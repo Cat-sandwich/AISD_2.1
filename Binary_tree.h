@@ -21,6 +21,7 @@ class tree
 private:
 	bin_tree* root;
 public:
+	
 	tree(int data = 0);
 	tree(const tree& tree);
 	bin_tree* copy(bin_tree* tr, bin_tree* copy_tr);

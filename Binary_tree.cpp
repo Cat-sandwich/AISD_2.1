@@ -4,6 +4,7 @@
 #include <iostream>
 using namespace std;
 
+
 tree::tree(int data)
 {
 	root = new bin_tree(data, NULL, NULL);

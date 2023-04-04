@@ -17,7 +17,7 @@ int get_key()
 int check_int()
 {
 	int number = 0;
-	while (number <= 1)
+	while (number <= 0)
 	{
 		while (!(cin >> number) || (cin.peek() != '\n'))
 		{
@@ -25,11 +25,66 @@ int check_int()
 			while (cin.get() != '\n');
 			cout << "Введите корректное значение...\n";
 		}
-		if (number <= 1) cout << "Введите корректное значение...\n";
+		if (number <= 0) cout << "Введите корректное значение...\n";
 
 	}
 
 	return number;
+}
+
+void intersection(tree* A, bin_tree* B, int** answer, int *i)
+{
+	
+	if (B)
+	{
+		if (A->contains(B->data) == true)
+		{
+			(*answer)[*i] = B->data;
+			(*i) += 1;
+		}
+		intersection(A, B->left, answer, i);
+		intersection(A, B->right, answer, i);
+	}
+	
+	
+}
+int checking_for_availability(int number_tree, int size)
+{
+	number_tree = check_int();
+	while (number_tree > size || number_tree < 0)
+	{
+		cout << "\nТакого дерева нет, введите корректный номер: ";
+		number_tree = check_int();
+	}
+	return number_tree;
+}
+
+tree task(bool check, int counter, int* size, tree* array)
+{
+	tree new_tree;
+	int* answer = new int[100];
+	int number_tree = -3, i = 0;
+	if (check == 1)
+	{
+		cout << "Введите номер дерева, с которым вы хотите выполнить пересечение (от 1 до "<< *size <<" ) : ";
+		number_tree = checking_for_availability(number_tree, *size);
+		intersection(&array[counter], array[number_tree - 1].get_root(), &answer, &i);
+		
+		if (i == 0)
+			throw exception();
+		for (int j = 0; j < i; j++)
+		{
+			new_tree.insert(answer[j]);
+		}
+		new_tree.erase(0);
+		return new_tree;
+		
+	}
+	else
+	{
+		cout << "Введите номер дерева, с которым вы хотите выполнить (от 0 до " << size << " ) : ";
+		number_tree = checking_for_availability(number_tree, *size);
+	}
 }
 
 void print_array(tree* array, int current, int size)
@@ -99,7 +154,7 @@ tree create_new_tree()
 	}
 	return new_tree;
 }
-tree* add_tree(tree* array, int current, int* size)
+tree* add_tree(tree* array, int current, int* size, tree new_tree)
 {
 	
 	tree* new_array = new tree[*size + 1];
@@ -109,7 +164,7 @@ tree* add_tree(tree* array, int current, int* size)
 		if (i < current)
 			new_array[i] = array[i];
 		else if (i == current)
-			new_array[i] = create_new_tree();
+			new_array[i] = new_tree;
 		else if (i > current)
 			new_array[i] = array[i - 1];
 	}	
@@ -166,7 +221,7 @@ void menu1()
 {
 	int key = 0;
 	bool menu1 = true;
-	int current = 0, size = 0, height = 0, count = 0;
+	int current = 0, size = 0, height = 0, check = 0;
 	tree* array = NULL;
 	while (menu1)
 	{
@@ -183,7 +238,7 @@ void menu1()
 			menu1 = false;
 			break;
 		case 49:
-			array = add_tree(array, current, &size);
+			array = add_tree(array, current, &size, create_new_tree());
 			break;
 		case 50:
 			if (size == 0)
@@ -233,6 +288,29 @@ void menu1()
 			system("pause");
 			break;
 		case 55:
+			if (size < 2)
+			{
+				cout << "У вас должно быть хотя бы два дерева!" << endl;
+				system("pause");
+				break;
+			}
+			cout << "Введите 1, чтобы выполнить пересечение, 0 - разность " << endl;
+			check = check_int();
+			while ((check < 0) || (check > 1))
+			{
+				cout << "Введите корректное значение" << endl;
+				check = check_int();
+			}
+			try
+			{
+				array = add_tree(array, current, &size, task(check, current, &size, array));
+			}
+			catch (const std::exception&)
+			{
+				cout << "Пересечения нет!";
+				system("pause");
+			}
+			
 			break;
 		case 75:
 			if (current > 0) current--;
