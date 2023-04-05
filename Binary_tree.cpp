@@ -4,6 +4,10 @@
 #include <iostream>
 using namespace std;
 
+tree::tree()
+{
+	root = NULL;
+}
 
 tree::tree(int data)
 {
@@ -69,7 +73,7 @@ bin_tree* tree::find(int data) const
     {
         if (tmp_root->data == data) return tmp_root;
         if (tmp_root->data > data)  tmp_root = tmp_root->left;
-        if (tmp_root->data < data)  tmp_root = tmp_root->right;
+        else if (tmp_root->data < data)  tmp_root = tmp_root->right;
     }
     return NULL;
 }

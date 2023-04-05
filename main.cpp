@@ -5,7 +5,7 @@
 #include <conio.h>
 #include <Windows.h>
 #include <iostream>
-
+#include "TIME.h"
 
 using namespace std;
 
@@ -32,12 +32,6 @@ int check_int()
 	}
 
 	return number;
-}
-
-size_t lcg() {
-	static size_t x = 0;
-	x = (1021 * x + 24631) % 116640;
-	return x;
 }
 
 void intersection(tree* A, bin_tree* B, int** answer, int *i)
@@ -279,10 +273,100 @@ void info()
 	cout << "6 - Посчитать высоту текущего дерева" << endl;
 	cout << "7 - Найти пересечение двух множеств" << endl;
 	cout << "8 - Найти разность двух множеств" << endl;
+	cout << "9 - Перейти в меню работы со временем" << endl;
 	cout << "0 - Завершить работу" << endl;
 	cout << "-> Вправо\n-< Влево\n" << endl;
 }
-void menu1()
+
+void info_2()
+{
+	cout << "\t ДЕРЕВО:" << endl;
+	cout << "1 - Время заполнения дерева N узлами" << endl;
+	cout << "2 - Время поиска элемента в дереве с N узлами" << endl;
+	cout << "3 - Время добавления в дерево с N узлами" << endl;
+	cout << "4 - Время удаления из дерева с N узлами" << endl;
+	cout << "\t ВЕКТОР:" << endl;
+	cout << "5 - Время заполнения вектора N узлами" << endl;
+	cout << "6 - Время поиска элемента в векторе с N узлами" << endl;
+	cout << "7 - Время добавления в вектор с N узлами" << endl;
+	cout << "8 - Время удаления из вектора с N узлами" << endl;
+	cout << "0 - Выйти в верхнее меню" << endl;
+}
+void info_3()
+{
+	cout << "Нажмите: " << endl;
+	cout << "1 - 1000 узлов" << endl;
+	cout << "2 - 10000 узлов" << endl;
+	cout << "3 - 100000 узлов" << endl;
+}
+
+void func(void (*func_point)(int))
+{
+	int number_node = 0;
+	info_3();
+	number_node = get_key();
+	switch (number_node)
+	{
+	case 49:
+		func_point(1000);
+		break;
+	case 50:
+		func_point(10000);
+		break;
+	case 51:
+		func_point(100000);
+		break;
+	default:
+		break;
+	}
+	
+
+}
+void menu_2()
+{
+	int key = 0;
+	bool menu2 = true;
+	while (menu2)
+	{
+		system("cls");
+		info_2();
+		key = get_key();
+		switch (key)
+		{
+		case 48:
+			menu2 = false;
+			break;
+		case 49:
+			func(create_time);
+			break;
+		case 50:
+			func(find_time);
+			break;
+		case 51:
+			func(insert_time);
+			break;
+		case 52:
+			func(erase_time);
+			break;
+		case 53:
+			func(create_time_vector);
+			break;
+		case 54:
+			func(find_time_vector);
+			break;
+		case 55:
+			func(insert_time);
+			break;
+		case 56:
+			func(erase_time);
+			break;
+		default:
+			break;
+		}
+
+	}
+}
+void menu_1()
 {
 	int key = 0;
 	bool menu1 = true;
@@ -388,7 +472,9 @@ void menu1()
 				cout << "\n Разности нет!\n";
 				system("pause");
 			}
-
+		case 57:
+			menu_2();
+			break;
 			break;
 		case 75:
 			if (current > 0) current--;
@@ -396,12 +482,13 @@ void menu1()
 		case 77:
 			if (current < size - 1) current++;
 			break;
-		default:
-			break;
-		}
+			default:
+				break;
+			}
 
 	}
 }
+
 
 int main()
 {
@@ -411,7 +498,7 @@ int main()
 
 	cout << "Здравствуйте! Вас приветствует программа \"ЛЕС\"\n" << endl;
 	system("pause");
-	menu1();
+	menu_1();
 
 	return 0;
 }
