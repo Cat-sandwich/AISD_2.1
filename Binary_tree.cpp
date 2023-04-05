@@ -209,14 +209,21 @@ bool tree::erase(int data)
 		if (min_node->right == NULL) // у минимального нет поддеревьев
 		{
 			erase_root->data = min_node->data;
-			parent_min_node->right = NULL;
+			if(parent_min_node->right == min_node)
+				parent_min_node->right = NULL;
+			else
+				parent_min_node->left = NULL;
 			delete min_node;
 			return true;
 		}
 		else // у минимального есть правое поддерево
 		{
 			erase_root->data = min_node->data;
-			parent_min_node->right = min_node->right;
+			if (parent_min_node->right == min_node)
+				parent_min_node->right = min_node->right;
+			else
+				parent_min_node->left = min_node->right;
+			
 			delete min_node;
 			return true;
 		}

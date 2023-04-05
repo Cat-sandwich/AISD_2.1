@@ -5,6 +5,8 @@
 #include <conio.h>
 #include <Windows.h>
 #include <iostream>
+
+
 using namespace std;
 
 
@@ -32,6 +34,12 @@ int check_int()
 	return number;
 }
 
+size_t lcg() {
+	static size_t x = 0;
+	x = (1021 * x + 24631) % 116640;
+	return x;
+}
+
 void intersection(tree* A, bin_tree* B, int** answer, int *i)
 {
 	
@@ -48,6 +56,20 @@ void intersection(tree* A, bin_tree* B, int** answer, int *i)
 	
 	
 }
+void difference(tree* A, bin_tree* B, int** answer, int* i)
+{
+	if (B)
+	{
+		if (A->contains(B->data) == false)
+		{
+			(*answer)[*i] = B->data;
+			(*i) += 1;
+		}
+		difference(A, B->left, answer, i);
+		difference(A, B->right, answer, i);
+	}
+
+}
 int checking_for_availability(int number_tree, int size)
 {
 	number_tree = check_int();
@@ -59,31 +81,73 @@ int checking_for_availability(int number_tree, int size)
 	return number_tree;
 }
 
-tree task(bool check, int counter, int* size, tree* array)
+tree task(bool check, int current, int* size, tree* array)
 {
-	tree new_tree;
+	
 	int* answer = new int[100];
 	int number_tree = -3, i = 0;
 	if (check == 1)
 	{
 		cout << "Введите номер дерева, с которым вы хотите выполнить пересечение (от 1 до "<< *size <<" ) : ";
 		number_tree = checking_for_availability(number_tree, *size);
-		intersection(&array[counter], array[number_tree - 1].get_root(), &answer, &i);
-		
+		intersection(&array[current], array[number_tree - 1].get_root(), &answer, &i);
+
+		system("cls");
+		cout << "Дерево 1:\n";
+		array[current].print_tree(array[current].get_root());
+		cout << "\n U \n";
+		cout << "Дерево 2:\n";
+		array[number_tree - 1].print_tree(array[number_tree - 1].get_root());
+		cout << "\n = \n";
+		cout << "Дерево 3:\n";
+
 		if (i == 0)
+		{
+			cout << " пустому множеству(" << endl;
 			throw exception();
-		for (int j = 0; j < i; j++)
+		}
+		tree new_tree(answer[0]);
+		for (int j = 1; j < i; j++)
 		{
 			new_tree.insert(answer[j]);
 		}
-		new_tree.erase(0);
+		new_tree.print_tree(new_tree.get_root());
+		system("pause");
 		return new_tree;
 		
 	}
 	else
 	{
-		cout << "Введите номер дерева, с которым вы хотите выполнить (от 0 до " << size << " ) : ";
+		cout << "Введите номер дерева, с которым вы хотите выполнить (от 0 до " << *size << " ) : ";
 		number_tree = checking_for_availability(number_tree, *size);
+		difference(&array[number_tree - 1], array[current].get_root(), &answer, &i);
+
+		system("cls");
+		cout << "Дерево 1:\n";
+		array[current].print_tree(array[current].get_root());
+		cout << "\n - \n";
+		cout << "Дерево 2:\n";
+		array[number_tree - 1].print_tree(array[number_tree - 1].get_root());
+		cout << "\n = \n";
+		cout << "Дерево 3:\n";
+
+		if (i == 0)
+		{
+			cout << " пустому множеству(" << endl;
+			throw exception();
+		}
+
+		tree new_tree(answer[0]);
+		cout << answer[0];
+
+		for (int j = 1; j < i; j++)
+		{
+			new_tree.insert(answer[j]);
+		}
+		new_tree.print_tree(new_tree.get_root());
+		system("pause");
+
+		return new_tree;
 	}
 }
 
@@ -213,7 +277,8 @@ void info()
 	cout << "4 - Добавить узел в текущее дерево" << endl;
 	cout << "5 - Удалить узел в текущем дереве" << endl;
 	cout << "6 - Посчитать высоту текущего дерева" << endl;
-	cout << "7 - Выполнить задание" << endl;
+	cout << "7 - Найти пересечение двух множеств" << endl;
+	cout << "8 - Найти разность двух множеств" << endl;
 	cout << "0 - Завершить работу" << endl;
 	cout << "-> Вправо\n-< Влево\n" << endl;
 }
@@ -294,23 +359,36 @@ void menu1()
 				system("pause");
 				break;
 			}
-			cout << "Введите 1, чтобы выполнить пересечение, 0 - разность " << endl;
-			check = check_int();
-			while ((check < 0) || (check > 1))
-			{
-				cout << "Введите корректное значение" << endl;
-				check = check_int();
-			}
+			check = 1;
 			try
 			{
 				array = add_tree(array, current, &size, task(check, current, &size, array));
 			}
 			catch (const std::exception&)
 			{
-				cout << "Пересечения нет!";
+				cout << "\n Пересечения нет!\n";
 				system("pause");
 			}
 			
+			break;
+		case 56:
+			if (size < 2)
+			{
+				cout << "У вас должно быть хотя бы два дерева!" << endl;
+				system("pause");
+				break;
+			}
+			check = 0;
+			try
+			{
+				array = add_tree(array, current, &size, task(check, current, &size, array));
+			}
+			catch (const std::exception&)
+			{
+				cout << "\n Разности нет!\n";
+				system("pause");
+			}
+
 			break;
 		case 75:
 			if (current > 0) current--;
