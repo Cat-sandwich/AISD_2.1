@@ -144,7 +144,7 @@ tree task(bool check, int current, int* size, tree* array)
 void print_array(tree* array, int current, int size)
 {
 
-	if (array == NULL) cout << "В лесу нет деревьев(\n\n";
+	if (size == 0) cout << "В лесу нет деревьев(\n\n";
 	else
 	{
 		cout << "Дерево №" << (current + 1) << "\n";
@@ -169,20 +169,58 @@ tree* add_node(tree* array, int current)
 
 	return array;
 }
-tree* del_node(tree* array, int current)
+
+tree* delete_all_tree(tree* array, int* current, int* size)
+{
+	delete[] array;
+	array = NULL;
+	*current = 0;
+	*size = 0;
+	cout << "Лес вырублен!\n";
+	system("pause");
+	return NULL;
+}
+tree* delete_one_tree(tree* array, int* current, int* size)
+{
+	if (*size == 1)
+		return delete_all_tree(array, current, size);
+	int tmp_current = *current;
+	tree* new_array = new tree[*size - 1];
+	for (int i = 0; i < *size; i++)
+	{
+		if (i < tmp_current)
+			new_array[i] = array[i];
+		else if (i == tmp_current)
+		{
+			array[i].delete_tree(array[i].get_root());
+		}
+		else  if (i >= tmp_current)
+			new_array[i - 1] = array[i];
+	}
+	*size -= 1;
+	cout << "Удаление дерева прошло успешно!\n";
+	system("pause");
+	return new_array;
+}
+
+tree* del_node(tree* array, int* current, int* size)
 {
 	cout << "Введите значение удаляемого узла  " << ":" << endl;
 	int data = check_int();
-	while (array[current].contains(data) == false)
+	while (array[*current].contains(data) == false)
 	{
 		cout << "Такого значения нет, нужно ввести то, которое есть!" << endl;
 		data = check_int();
 	}
-	bool check = array[current].erase(data);
+	bool check = array[*current].erase(data);
 	if (check)
 	{
 		cout << "Удаление узла прошло успешно!\n";
 		system("pause");
+	}
+	if (array[*current].get_root() == NULL)
+	{
+		delete_one_tree(array, current, size);
 	}
 	return array;
 
@@ -192,9 +230,9 @@ tree create_new_tree()
 	cout << "Введите кол-во элементов в дереве: ";
 	int n = 0;
 	n = check_int();
-	while (n <= 0)
+	while (n <= 0 || n>10)
 	{
-		cout << "Введите значение больше нуля...\n";
+		cout << "Введите значение больше нуля... но меньше 10\n";
 		n = check_int();
 	}
 	
@@ -234,38 +272,6 @@ tree* add_tree(tree* array, int current, int* size, tree new_tree)
 	return new_array;
 }
 
-tree* delete_all_tree(tree* array, int* current, int* size)
-{
-	delete[] array;
-	*current = 0;
-	*size = 0;
-	cout << "Лес вырублен!\n";
-	system("pause");
-	return NULL;
-}
-
-tree* delete_one_tree(tree* array,int* current, int* size)
-{
-	if (*size == 1)
-		return delete_all_tree(array, current, size);
-	int tmp_current = *current;
-	tree* new_array = new tree[*size - 1];
-	for (int i = 0; i < *size; i++)
-	{
-		if (i < tmp_current)
-			new_array[i] = array[i];
-		else if (i == tmp_current)
-		{
-			array[i].delete_tree(array[i].get_root());
-		}
-		else  if (i >= tmp_current)
-			new_array[i - 1] = array[i];
-	}
-	*size -= 1;
-	cout << "Удаление дерева прошло успешно!\n";
-	system("pause");	
-	return new_array;
-}
 void info()
 {
 	cout << "1 - Создать дерево" << endl;
@@ -277,6 +283,7 @@ void info()
 	cout << "7 - Найти пересечение двух множеств" << endl;
 	cout << "8 - Найти разность двух множеств" << endl;
 	cout << "9 - Перейти в меню работы со временем" << endl;
+	cout << "= - Выполнить балансировку дерева" << endl;
 	cout << "0 - Завершить работу" << endl;
 	cout << "-> Вправо\n-< Влево\n" << endl;
 }
@@ -295,13 +302,7 @@ void info_2()
 	cout << "8 - Время удаления из вектора с N узлами" << endl;
 	cout << "0 - Выйти в верхнее меню" << endl;
 }
-void info_3()
-{
-	cout << "Нажмите: " << endl;
-	cout << "1 - 1000 узлов" << endl;
-	cout << "2 - 10000 узлов" << endl;
-	cout << "3 - 100000 узлов" << endl;
-}
+
 
 void func(float (*func_point)(int), string name)
 {
@@ -422,7 +423,7 @@ void menu_1()
 				system("pause");
 				break;
 			}
-			array = del_node(array, current);
+			array = del_node(array, &current, &size);
 			break;
 		case 54:
 			if (size == 0)
@@ -471,9 +472,12 @@ void menu_1()
 				cout << "\n Разности нет!\n";
 				system("pause");
 			}
+			break;
 		case 57:
 			menu_2();
 			break;
+		case 61:
+			array[current].balance_tree(array[current].get_root());
 			break;
 		case 75:
 			if (current > 0) current--;

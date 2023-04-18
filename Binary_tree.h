@@ -37,4 +37,9 @@ public:
 	bool contains(int data) const;
 	bin_tree* get_root();
 	int height(bin_tree* root) const;
+	int height_difference(bin_tree* root) const;
+	bin_tree* rotate_right(bin_tree* root);
+	bin_tree* rotate_left(bin_tree* root);
+	bin_tree* balance(bin_tree* root);
+	void balance_tree(bin_tree* root);
 };

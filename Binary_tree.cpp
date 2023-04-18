@@ -64,6 +64,7 @@ void tree::delete_tree(bin_tree* root)
 		delete_tree(root->left);
 		delete_tree(root->right);
 		delete root;
+		root = NULL;
 	}
 }
 bin_tree* tree::find(int data) const
@@ -104,7 +105,7 @@ bool tree::insert(int data)
 		return true;
 	}
 	bin_tree* tmp_root = root;
-	while (tmp_root && tmp_root->data != data)00
+	while (tmp_root && tmp_root->data != data)
 	{
 		if (tmp_root->data > data && tmp_root->left == NULL)
 		{
@@ -157,9 +158,8 @@ bool tree::erase(int data)
 	{
 		if (root->left == NULL && root->right == NULL)
 		{
-			cout << "Вы не можете удалить корень!" << endl;
-			system("pause");
-			return false;
+			root = NULL;
+			return true;
 		}
 		if (erase_root->left != NULL && erase_root->right == NULL) // если есть левое поддерево, но нет правого
 		{
@@ -249,11 +249,61 @@ int tree::height(bin_tree* root) const
 		return l + 1;
 
 }
+
+int tree::height_difference(bin_tree* root) const
+{
+	return height(root->right) - height(root->left);
+}
+bin_tree* tree::rotate_right(bin_tree* root) 
+{
+	bin_tree* new_root = root->left;
+	root->left = new_root->right;
+	new_root->right = root;
+	root = new_root;
+	return root;
+}
+bin_tree* tree::rotate_left(bin_tree* root)
+{
+	bin_tree* new_root = root->right;
+	root->right = new_root->left;
+	new_root->left = root;
+	root = new_root;
+	return root;
+}
+
+bin_tree* tree::balance(bin_tree* root)
+{
+	
+	if (height_difference(root) == 2)
+	{
+		if (height_difference(root->right) < 0)
+			root->right = rotate_right(root->right);
+		return rotate_left(root);
+	}
+	if (height_difference(root) == -2)
+	{
+		if (height_difference(root->left) > 0)
+			root->left = rotate_left(root->left);
+		return rotate_right(root);
+	}
+	return root;
+}
+void tree::balance_tree(bin_tree* root)
+{
+	bin_tree* new_root = NULL;
+	if(root)
+	{
+		balance_tree(root->left);
+		new_root = balance(root);
+		balance_tree(root->right);
+	}
+	this->root = new_root;
+}
 void tree::print_tree(bin_tree* root, int ident, int level) const
 {		
 	if (root)
 	{
-		print_tree(root->left,-1, level + 2);
+		print_tree(root->right, 1, level + 2);		
 		for (int i = 0; i < level; i++) cout << "   ";
 		if (ident == 0)
 			cout << "к: "<< root->data << "----------------------------------" << endl;
@@ -261,7 +311,7 @@ void tree::print_tree(bin_tree* root, int ident, int level) const
 			cout << "п : "<< root->data << endl;
 		if (ident == -1)
 			cout << "л: "<< root->data << endl;
-		print_tree(root->right,1, level + 2);
+		print_tree(root->left, -1, level + 2);
 	}	
 	
 }
