@@ -104,7 +104,7 @@ bool tree::insert(int data)
 		return true;
 	}
 	bin_tree* tmp_root = root;
-	while (tmp_root && tmp_root->data != data)
+	while (tmp_root && tmp_root->data != data)00
 	{
 		if (tmp_root->data > data && tmp_root->left == NULL)
 		{

@@ -6,7 +6,7 @@
 #include <Windows.h>
 #include <iostream>
 #include "TIME.h"
-
+#include <fstream>
 using namespace std;
 
 
@@ -19,18 +19,14 @@ int get_key()
 int check_int()
 {
 	int number = 0;
-	while (number <= 0)
+	
+	while (!(cin >> number) || (cin.peek() != '\n'))
 	{
-		while (!(cin >> number) || (cin.peek() != '\n'))
-		{
-			cin.clear();
-			while (cin.get() != '\n');
-			cout << "¬ведите корректное значение...\n";
-		}
-		if (number <= 0) cout << "¬ведите корректное значение...\n";
-
+		cin.clear();
+		while (cin.get() != '\n');
+		cout << "¬ведите корректное значение...\n";
 	}
-
+	
 	return number;
 }
 
@@ -112,7 +108,7 @@ tree task(bool check, int current, int* size, tree* array)
 	}
 	else
 	{
-		cout << "¬ведите номер дерева, с которым вы хотите выполнить (от 0 до " << *size << " ) : ";
+		cout << "¬ведите номер дерева, с которым вы хотите выполнить (от 1 до " << *size << " ) : ";
 		number_tree = checking_for_availability(number_tree, *size);
 		difference(&array[number_tree - 1], array[current].get_root(), &answer, &i);
 
@@ -194,7 +190,14 @@ tree* del_node(tree* array, int current)
 tree create_new_tree()
 {
 	cout << "¬ведите кол-во элементов в дереве: ";
-	int n = check_int();
+	int n = 0;
+	n = check_int();
+	while (n <= 0)
+	{
+		cout << "¬ведите значение больше нул€...\n";
+		n = check_int();
+	}
+	
 
 	cout << "¬ведите значение корн€: ";
 	int a = check_int();
@@ -300,27 +303,23 @@ void info_3()
 	cout << "3 - 100000 узлов" << endl;
 }
 
-void func(void (*func_point)(int))
+void func(float (*func_point)(int), string name)
 {
-	int number_node = 0;
-	info_3();
-	number_node = get_key();
-	switch (number_node)
-	{
-	case 49:
-		func_point(1000);
-		break;
-	case 50:
-		func_point(10000);
-		break;
-	case 51:
-		func_point(100000);
-		break;
-	default:
-		break;
-	}
-	
+	fstream file;
+	file.open(name, ios::app);
+	float res1 = func_point(1000);
+	float res2 = func_point(5000);
+	float res3 = func_point(10000);
+	float res4 = func_point(50000);
+	float res5 = func_point(100000);
+	file << 1000 << " " << res1 << endl;
+	file << 5000 << " " << res2 << endl;
+	file << 10000 << " "  << res3 << endl;
+	file << 50000 << " "  << res4 << endl;
+	file << 100000 << " " << res5 << endl << endl;
+	file.close();
 
+	system("pause");
 }
 void menu_2()
 {
@@ -337,28 +336,28 @@ void menu_2()
 			menu2 = false;
 			break;
 		case 49:
-			func(create_time);
+			func(create_time, "res_tree.txt");
 			break;
 		case 50:
-			func(find_time);
+			func(find_time, "res_tree.txt");
 			break;
 		case 51:
-			func(insert_time);
+			func(insert_time, "res_tree.txt");
 			break;
 		case 52:
-			func(erase_time);
+			func(erase_time, "res_tree.txt");
 			break;
 		case 53:
-			func(create_time_vector);
+			func(create_time_vector, "res_vector.txt");
 			break;
 		case 54:
-			func(find_time_vector);
+			func(find_time_vector, "res_vector.txt");
 			break;
 		case 55:
-			func(insert_time);
+			func(insert_time, "res_vector.txt");
 			break;
 		case 56:
-			func(erase_time);
+			func(erase_time, "res_vector.txt");
 			break;
 		default:
 			break;

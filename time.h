@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 
+
 using namespace std;
 
 size_t lcg() {
@@ -12,27 +13,29 @@ size_t lcg() {
     return x;
 }
 
-void create_time(int number_nodes)
-{    
-    chrono::duration<float> result(0);
+float create_time(int number_nodes)
+{
+    chrono::duration<float> result(0), one_res(0);
+    float res = 0;
+
     for (int i = 0; i < 100; i += 1)
     {
         auto start = chrono::high_resolution_clock::now();
         tree tmp_tree;
-       
+        
         for (int j = 0; j < number_nodes; j++)
             tmp_tree.insert(int(lcg()));
 
         auto end = chrono::high_resolution_clock::now();
-        result += end - start;
-        
+        result += end - start;        
     }
+    
     result /= 100;
     cout << endl << "На создание дерева из " << number_nodes << " элементов ушло: " << result.count() << endl;
-    system("pause");
+    return result.count();
 }
 
-void find_time(int number_nodes)
+float find_time(int number_nodes)
 {
     tree tmp_tree;
     auto start = chrono::high_resolution_clock::now();
@@ -52,10 +55,10 @@ void find_time(int number_nodes)
     }
     result /= 1000;
     cout << endl << "На поиск случайного элемента в дереве из " << number_nodes << " элементов ушло: " << result.count() << endl;
-    system("pause");
+    return result.count();
 }
 
-void insert_time(int number_nodes)
+float insert_time(int number_nodes)
 {
     
     tree tmp_tree;
@@ -75,10 +78,10 @@ void insert_time(int number_nodes)
     }
     result /= 1000;
     cout << endl << "На добавление случайного элемента в дерево из " << number_nodes << " элементов ушло: " << result.count() << endl;
-    system("pause");
+    return result.count();
 }
 
-void erase_time(int number_nodes)
+float erase_time(int number_nodes)
 {    
     tree tmp_tree;
    
@@ -97,11 +100,11 @@ void erase_time(int number_nodes)
     }
     result /= 1000;
     cout << endl << "На удаление случайного элемента в дереве из " << number_nodes << " элементов ушло: " << result.count() << endl;
-    system("pause");
+    return result.count();
 }
 
 // с классом-контейнером
-void create_time_vector(int number_nodes)
+float create_time_vector(int number_nodes)
 {
     chrono::duration<float> result(0);
 
@@ -116,10 +119,10 @@ void create_time_vector(int number_nodes)
     }
     result /= 100;
     cout << endl << "На создание дерева из " << number_nodes << " элементов ушло: " << result.count() << endl;
-    system("pause");
+    return result.count();
 }
 
-void find_time_vector(int number_nodes)
+float find_time_vector(int number_nodes)
 {
     vector<int> tmp_vector(number_nodes);    
     chrono::duration<float> result(0);
@@ -133,13 +136,14 @@ void find_time_vector(int number_nodes)
         find(tmp_vector.begin(), tmp_vector.end(), int(lcg()));
         auto end = chrono::high_resolution_clock::now();
         result += end - start;
+        
     }
     result /= 1000;
     cout << endl << "На поиск случайного элемента в векторе из " << number_nodes << " элементов ушло: " << result.count() << endl;
-    system("pause");
+    return result.count();
 }
 
-void insert_time_vector(int number_nodes)
+float insert_time_vector(int number_nodes)
 {
     vector<int> tmp_vector(number_nodes);
     chrono::duration<float> result(0);
@@ -156,10 +160,10 @@ void insert_time_vector(int number_nodes)
     }
     result /= 1000;
     cout << endl << "На вставку случайного элемента в вектор из " << number_nodes << " элементов ушло: " << result.count() << endl;
-    system("pause");
+    return result.count();
 }
 
-void erase_time_vector(int number_nodes)
+float erase_time_vector(int number_nodes)
 {
     vector<int> tmp_vector(number_nodes);
     chrono::duration<float> result(0);
@@ -185,5 +189,5 @@ void erase_time_vector(int number_nodes)
     }
     result /= 1000;
     cout << endl << "На удаление случайного элемента в векторе из " << number_nodes << " элементов ушло: " << result.count() << endl;
-    system("pause");
+    return result.count();
 }
