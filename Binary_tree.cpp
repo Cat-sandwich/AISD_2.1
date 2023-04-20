@@ -273,31 +273,58 @@ bin_tree* tree::rotate_left(bin_tree* root)
 
 bin_tree* tree::balance(bin_tree* root)
 {
-	
+	if (root == this->root)
+	{
+		if (height_difference(root) >= 2)
+		{
+			if (height_difference(root->right) < 0)
+				root->right = rotate_right(root->right);
+			this->root = rotate_left(root);
+			return this->root;
+		}
+		if (height_difference(root) <= -2)
+		{
+			if (height_difference(root->left) > 0)
+				root->left = rotate_left(root->left);
+			this->root = rotate_right(root);
+			return this->root;
+		}
+	}
 	if (height_difference(root) == 2)
 	{
 		if (height_difference(root->right) < 0)
 			root->right = rotate_right(root->right);
-		return rotate_left(root);
+		bin_tree* parent_root = find_parent(root->data, this->root );
+		if (parent_root->right = root)
+			parent_root->right = rotate_left(root);
+		else
+			parent_root->left = rotate_left(root);
+		return  root;
 	}
 	if (height_difference(root) == -2)
 	{
 		if (height_difference(root->left) > 0)
 			root->left = rotate_left(root->left);
-		return rotate_right(root);
+		bin_tree* parent_root = find_parent(root->data, this->root);
+		if (parent_root->right = root)
+			parent_root->right = rotate_right(root);
+		else
+			parent_root->left = rotate_right(root);
+		return  root;
 	}
 	return root;
 }
 void tree::balance_tree(bin_tree* root)
 {
-	bin_tree* new_root = NULL;
+	
 	if(root)
-	{
-		balance_tree(root->left);
-		new_root = balance(root);
+	{		
+		balance_tree(root->left);		
 		balance_tree(root->right);
+		root = balance(root);
+		
 	}
-	this->root = new_root;
+	
 }
 void tree::print_tree(bin_tree* root, int ident, int level) const
 {		
