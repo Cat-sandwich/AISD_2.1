@@ -7,6 +7,7 @@
 #include <iostream>
 #include "TIME.h"
 #include <fstream>
+#include <random>
 using namespace std;
 
 
@@ -225,6 +226,30 @@ tree* del_node(tree* array, int* current, int* size)
 	return array;
 
 }
+tree create_random_tree()
+{
+	srand(time(0));
+	cout << "Введите кол-во элементов в дереве: ";
+	int n = 0;
+	n = check_int();
+	while (n <= 0 || n > 10)
+	{
+		cout << "Введите значение больше нуля... но меньше 10\n";
+		n = check_int();
+	}
+	int a = -100 + rand() % 200;
+	tree new_tree(a);
+
+	for (int i = 0; i < n - 1; i++)
+	{
+		a = -100 + rand() % 200;
+		while (new_tree.insert(a) == false)
+		{
+			a = -100 + rand() % 200;
+		}
+	}
+	return new_tree;
+}
 tree create_new_tree()
 {
 	cout << "Введите кол-во элементов в дереве: ";
@@ -275,6 +300,7 @@ tree* add_tree(tree* array, int current, int* size, tree new_tree)
 void info()
 {
 	cout << "1 - Создать дерево" << endl;
+	cout << "Q - Создать рандомное дерево" << endl;
 	cout << "2 - Удалить текущее дерево " << endl;
 	cout << "3 - Удалить все деревья" << endl;
 	cout << "4 - Добавить узел в текущее дерево" << endl;
@@ -388,6 +414,12 @@ void menu_1()
 			break;
 		case 49:
 			array = add_tree(array, current, &size, create_new_tree());
+			break;
+		case 113:
+			array = add_tree(array, current, &size, create_random_tree());
+			break;
+		case 233 :
+			array = add_tree(array, current, &size, create_random_tree());
 			break;
 		case 50:
 			if (size == 0)
